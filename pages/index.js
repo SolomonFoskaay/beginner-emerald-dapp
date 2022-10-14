@@ -14,7 +14,6 @@ export default function Home() {
     console.log(newGreeting)
   }
 
-
   return (
     <div className={styles.container}>
       <Head>
