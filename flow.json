@@ -5,7 +5,7 @@
 		"testnet": "access.devnet.nodes.onflow.org:9000"
 	},
 	"contracts": {
-		"HelloWorld": "./flow/cadence/contracts/HelloWorld.cdc"
+		"HelloWeb3": "./flow/cadence/contracts/HelloWeb3.cdc"
 	},
 	"accounts": {
 		"emulator-account": {
@@ -26,7 +26,7 @@
 	  "deployments": {
 		"testnet": {
 		  "testnet-account": [
-			"HelloWorld"
+			"HelloWeb3"
 		  ]
 		}
 	  }
