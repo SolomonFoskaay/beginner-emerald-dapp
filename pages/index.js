@@ -20,29 +20,49 @@ export default function Home() {
   }
 
   // Execute script on flow using FCL
-  async function executeScript() {
-    const response = await fcl.query({
-      // Cadence code in form of string goes in here
-      cadence: `
-        import HelloWorld from 0xb3e2d05cf2cdb97a
+  // async function executeScript() {
+  //   const response = await fcl.query({
+  //     // Cadence code in form of string goes in here
+  //     cadence: `
+  //       import HelloWorld from 0xb3e2d05cf2cdb97a
 
-        pub fun main(): String {
-            return HelloWorld.greeting
-        }
-      `,
-      // Arguments used in above cadence code string goes in here
-      args: (arg, t) => [] 
-    })
-    // set greeting variable to value of response
-    greeting = response;
-    document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
-    console.log("Response from our script is: " + greeting); //console log greeting value
-  }
+  //       pub fun main(): String {
+  //           return HelloWorld.greeting
+  //       }
+  //     `,
+  //     // Arguments used in above cadence code string goes in here
+  //     args: (arg, t) => [] 
+  //   })
+  //   // set greeting variable to value of response
+  //   greeting = response;
+  //   document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
+  //   console.log("Response from our script is: " + greeting); //console log greeting value
+  // }
 
-  // calling the script at every page refresh
-  useEffect(() => {
-    executeScript()
-  }, [])
+    // Execute script on flow using FCL 2 for SimpleTest Quest
+    async function executeScript() {
+      const response = await fcl.query({
+        // Cadence code in form of string goes in here
+        cadence: `
+          import SimpleTest from 0x6c0d53c676256e8c
+  
+          pub fun main(): Int {
+              return SimpleTest.number
+          }
+        `,
+        // Arguments used in above cadence code string goes in here
+        args: (arg, t) => [] 
+      })
+      // set greeting variable to value of response
+      greeting = response;
+      document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
+      console.log("Magic Number Response From Our Script Is: " + greeting); //console log greeting value
+    }
+
+  // calling the script at every page refresh using useEffect
+  // useEffect(() => {
+  //   executeScript()
+  // }, [])
 
 
   return (
@@ -76,14 +96,16 @@ export default function Home() {
           {/* search keyword input */}
           <input onChange={(e) => setNewGreeting(e.target.value)} placeholder="Hello, Idiots!" />
         </div>
+
         {/* print greeting on homepage */}
-        <p id="greeting"></p>
+        <p id="greeting"> Click Button Below To Uncover The Magic Number</p>
+
         {/* added div and buttons ... */}
-        {/* <div>
-          <button onClick={runTransaction}>
-            Run Transaction
+        <div>
+          <button onClick={executeScript}>
+            Magic Number
           </button>
-        </div> */}
+        </div>
 
       </main>
     </div>
