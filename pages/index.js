@@ -78,7 +78,7 @@ export default function Home() {
         </div>
         {/* print greeting on homepage */}
         <p id="greeting"></p>
-        {/* added div and buttons */}
+        {/* added div and buttons ... */}
         {/* <div>
           <button onClick={runTransaction}>
             Run Transaction
