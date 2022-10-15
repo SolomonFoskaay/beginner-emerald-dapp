@@ -1,7 +1,9 @@
 import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Nav from '../components/Nav.jsx'; //Import Nav component
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; //Import useState/UseEffect
+import * as fcl from "@onflow/fcl" //Import FCL (Flow Client Library)
+
 
 
 export default function Home() {
@@ -9,10 +11,39 @@ export default function Home() {
   // declare variable newGreeting
   const [newGreeting, setNewGreeting] = useState('');
 
+  // declare variable greeting
+  let [greeting, setGreeting] = useState('');
+
   // js runTransaction function for Run Transaction button
   function runTransaction() {
     console.log(newGreeting)
   }
+
+  // Execute script on flow using FCL
+  async function executeScript() {
+    const response = await fcl.query({
+      // Cadence code in form of string goes in here
+      cadence: `
+        import HelloWorld from 0xb3e2d05cf2cdb97a
+
+        pub fun main(): String {
+            return HelloWorld.greeting
+        }
+      `,
+      // Arguments used in above cadence code string goes in here
+      args: (arg, t) => [] 
+    })
+    // set greeting variable to value of response
+    greeting = response;
+    document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
+    console.log("Response from our script is: " + greeting); //console log greeting value
+  }
+
+  // calling the script at every page refresh
+  useEffect(() => {
+    executeScript()
+  }, [])
+
 
   return (
     <div className={styles.container}>
@@ -38,14 +69,22 @@ export default function Home() {
 
         {/* added div and buttons */}
         <div className={styles.flex}>
-        <button onClick={runTransaction}>
-          Run Transaction
-        </button>
+          <button onClick={runTransaction}>
+            Run Transaction
+          </button>
 
-        {/* search keyword input */}
-        <input onChange={(e) => setNewGreeting(e.target.value)} placeholder="Hello, Idiots!" />
-
+          {/* search keyword input */}
+          <input onChange={(e) => setNewGreeting(e.target.value)} placeholder="Hello, Idiots!" />
         </div>
+        {/* print greeting on homepage */}
+        <p id="greeting"></p>
+        {/* added div and buttons */}
+        {/* <div>
+          <button onClick={runTransaction}>
+            Run Transaction
+          </button>
+        </div> */}
+
       </main>
     </div>
   )
