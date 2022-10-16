@@ -2,22 +2,53 @@ import Head from 'next/head'
 import styles from '../styles/Home.module.css'
 import Nav from '../components/Nav.jsx'; //Import Nav component
 import { useState, useEffect } from 'react'; //Import useState/UseEffect
-import * as fcl from "@onflow/fcl" //Import FCL (Flow Client Library)
+import * as fcl from "@onflow/fcl"; //Import FCL (Flow Client Library)
 
 
 
 export default function Home() {
 
-  // declare variable newGreeting
-  const [newGreeting, setNewGreeting] = useState('');
-
   // declare variable greeting
-  let [greeting, setGreeting] = useState('');
+  const [greeting, setGreeting] = useState('');
+  // declare variable newGreeting
+  const [newNumber, setNewNumber] = useState('');
 
   // js runTransaction function for Run Transaction button
-  function runTransaction() {
-    console.log(newGreeting)
-  }
+  // function runTransaction() {
+  //   console.log("Running transaction!");
+  //   console.log("Changing the greeting to: " + newGreeting);
+  // }
+
+  // Execute transaction on flow using FCL
+  async function runTransaction() {
+    const transactionId = await fcl.mutate({
+      cadence: `
+      import SimpleTest from 0x6c0d53c676256e8c
+  
+      transaction(myNewNumber: Int) {
+  
+        prepare(signer: AuthAccount) {}
+  
+        execute {
+          SimpleTest.updateNumber(newNumber: myNewNumber)
+        }
+      }
+      `,
+      args: (arg, t) => [
+        arg(newNumber, t.Int)
+      ],
+      proposer: fcl.authz,
+      payer: fcl.authz,
+      authorizations: [fcl.authz],
+      limit: 999
+    })
+    // Log Transaction hash for check on Flowscan
+    //Example: 4ab9ba2dbd38ac11c11f026db7d4ad3859408006cf5f212509f9a74fec3f2466
+    console.log("Here is the transactionId: " + transactionId);
+    // Instantly auto update displayed greeting after transaction successful
+    await fcl.tx(transactionId).onceSealed();
+      executeScript(); //call executeScript function
+    }
 
   // Execute script on flow using FCL
   // async function executeScript() {
@@ -34,84 +65,29 @@ export default function Home() {
   //     args: (arg, t) => [] 
   //   })
   //   // set greeting variable to value of response
-  //   greeting = response;
-  //   document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
-  //   console.log("Response from our script is: " + greeting); //console log greeting value
+  //   setGreeting(response); //create ID to access greeting value in html
+  //   console.log("Response from our script is: " + response); //console log greeting value
   // }
 
-    // Execute script on flow using FCL 2 for SimpleTest Quest
-    // async function executeScript() {
-    //   const response = await fcl.query({
-    //     // Cadence code in form of string goes in here
-    //     cadence: `
-    //       import SimpleTest from 0x6c0d53c676256e8c
-  
-    //       pub fun main(): Int {
-    //           return SimpleTest.number
-    //       }
-    //     `,
-    //     // Arguments used in above cadence code string goes in here
-    //     args: (arg, t) => [] 
-    //   })
-    //   // set greeting variable to value of response
-    //   greeting = response;
-    //   document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
-    //   console.log("Magic Number Response From Our Script Is: " + greeting); //console log greeting value
-    // }
-
-    //  Execute script on flow using FCL 2 for SimpleTest Quest
+    // Execute script on flow using FCL
     async function executeScript() {
       const response = await fcl.query({
+        // Cadence code in form of string goes in here
         cadence: `
-        pub fun main(
-          a: Int, 
-          b: String, 
-          c: UFix64, 
-          d: Address, 
-          e: Bool,
-          f: String?,
-          g: [Int],
-          h: {String: Address}
-        ): Address {
-          // Example:
-          // a = 2
-          // b = "Jacob is so cool"
-          // c = 5.0
-          // d = 0x6c0d53c676256e8c
-          // e = true
-          // f = nil
-          // g = [1, 2, 3]
-          // h = {"FLOAT": 0x2d4c3caffbeab845, "EmeraldID": 0x39e42c67cc851cfb}
-    
-          // something happens here... but it doesn't matter
-
-          //return random value of a-h to be outputed by script by refreshing the page 
-          return d
-        }
+          import SimpleTest from 0x6c0d53c676256e8c
+  
+          pub fun main(): Int {
+              return SimpleTest.number
+          }
         `,
-        args: (arg, t) => [
-          arg("2", t.Int),
-          arg("Jacob is so cool", t.String),
-          arg("5.0", t.UFix64),
-          arg("0x6c0d53c676256e8c", t.Address),
-          arg(true, t.Bool),
-          arg(null, t.Optional(t.String)),
-          arg([1, 2, 3], t.Array(t.Int)),
-          arg(
-            [
-              { key: "FLOAT", value: "0x2d4c3caffbeab845" },
-              { key: "EmeraldID", value: "0x39e42c67cc851cfb" }
-            ], 
-            t.Dictionary({ key: t.String, value: t.Address })
-          )
-        ]
+        // Arguments used in above cadence code string goes in here
+        args: (arg, t) => [] 
       })
-           // set greeting variable to value of response
-           greeting = response;
-           document.getElementById("greeting").innerHTML=greeting; //create ID to access greeting value in html
-           console.log("Magic Number Response From Our Script Is: " + greeting); //console log greeting value
-     
+      // set greeting variable to value of response
+      setGreeting(response); //create ID to access greeting value in html
+      console.log("Response from our script is: " + response); //console log greeting value
     }
+
 
   // calling the script at every page refresh using useEffect
   useEffect(() => {
@@ -146,13 +122,12 @@ export default function Home() {
           <button onClick={runTransaction}>
             Run Transaction
           </button>
-
           {/* search keyword input */}
-          <input onChange={(e) => setNewGreeting(e.target.value)} placeholder="Hello, Idiots!" />
+          <input onChange={(e) => setNewNumber(e.target.value)} placeholder="Type Here!" />
         </div>
 
         {/* print greeting on homepage */}
-        <p id="greeting"> Autoloading...... The Magic Number</p>
+        <p>{greeting}</p>
 
         {/* added div and buttons ... */}
         {/* <div>
