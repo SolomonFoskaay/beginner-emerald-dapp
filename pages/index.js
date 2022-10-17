@@ -11,7 +11,9 @@ export default function Home() {
   // declare variable greeting
   const [greeting, setGreeting] = useState('');
   // declare variable newGreeting
-  const [newNumber, setNewNumber] = useState('');
+  const [newGreeting, setNewGreeting] = useState('');
+  // declare variable txStatus
+  // const [txStatus, setTxStatus] = useState('');
 
   // js runTransaction function for Run Transaction button
   // function runTransaction() {
@@ -23,19 +25,19 @@ export default function Home() {
   async function runTransaction() {
     const transactionId = await fcl.mutate({
       cadence: `
-      import SimpleTest from 0x6c0d53c676256e8c
+      import HelloWorld from 0xb3e2d05cf2cdb97a
   
-      transaction(myNewNumber: Int) {
-  
+      transaction(myNewGreeting: String) {
+
         prepare(signer: AuthAccount) {}
-  
+      
         execute {
-          SimpleTest.updateNumber(newNumber: myNewNumber)
+          HelloWorld.changeGreeting(newGreeting: myNewGreeting)
         }
       }
       `,
       args: (arg, t) => [
-        arg(newNumber, t.Int)
+        arg(newGreeting, t.String)
       ],
       proposer: fcl.authz,
       payer: fcl.authz,
@@ -51,42 +53,42 @@ export default function Home() {
     }
 
   // Execute script on flow using FCL
-  // async function executeScript() {
-  //   const response = await fcl.query({
-  //     // Cadence code in form of string goes in here
-  //     cadence: `
-  //       import HelloWorld from 0xb3e2d05cf2cdb97a
+  async function executeScript() {
+    const response = await fcl.query({
+      // Cadence code in form of string goes in here
+      cadence: `
+        import HelloWorld from 0xb3e2d05cf2cdb97a
 
-  //       pub fun main(): String {
-  //           return HelloWorld.greeting
-  //       }
-  //     `,
-  //     // Arguments used in above cadence code string goes in here
-  //     args: (arg, t) => [] 
-  //   })
-  //   // set greeting variable to value of response
-  //   setGreeting(response); //create ID to access greeting value in html
-  //   console.log("Response from our script is: " + response); //console log greeting value
-  // }
+        pub fun main(): String {
+            return HelloWorld.greeting
+        }
+      `,
+      // Arguments used in above cadence code string goes in here
+      args: (arg, t) => [] 
+    })
+    // set greeting variable to value of response
+    setGreeting(response); //create ID to access greeting value in html
+    console.log("Response from our script is: " + response); //console log greeting value
+  }
 
     // Execute script on flow using FCL
-    async function executeScript() {
-      const response = await fcl.query({
-        // Cadence code in form of string goes in here
-        cadence: `
-          import SimpleTest from 0x6c0d53c676256e8c
+    // async function executeScript() {
+    //   const response = await fcl.query({
+    //     // Cadence code in form of string goes in here
+    //     cadence: `
+    //       import SimpleTest from 0x6c0d53c676256e8c
   
-          pub fun main(): Int {
-              return SimpleTest.number
-          }
-        `,
-        // Arguments used in above cadence code string goes in here
-        args: (arg, t) => [] 
-      })
-      // set greeting variable to value of response
-      setGreeting(response); //create ID to access greeting value in html
-      console.log("Response from our script is: " + response); //console log greeting value
-    }
+    //       pub fun main(): Int {
+    //           return SimpleTest.number
+    //       }
+    //     `,
+    //     // Arguments used in above cadence code string goes in here
+    //     args: (arg, t) => [] 
+    //   })
+    //   // set greeting variable to value of response
+    //   setGreeting(response); //create ID to access greeting value in html
+    //   console.log("Response from our script is: " + response); //console log greeting value
+    // }
 
 
   // calling the script at every page refresh using useEffect
@@ -106,7 +108,7 @@ export default function Home() {
       {/* add nav bar component*/}
       <Nav />
 
-      <main className={styles.main}>
+      <div className={styles.welcome}>
 
         <h1 className={styles.title}>
           Welcome to my <a href="https://github.com/SolomonFoskaay/beginner-emerald-dapp" target="_blank">Emerald DApp!</a>
@@ -117,26 +119,38 @@ export default function Home() {
           Foskaay is Learning Cadence dApp Development For Flow Blockchain At Emerald DAO
         </p>
 
-        {/* added div and buttons */}
-        <div className={styles.flex}>
-          <button onClick={runTransaction}>
-            Run Transaction
-          </button>
-          {/* search keyword input */}
-          <input onChange={(e) => setNewNumber(e.target.value)} placeholder="Type Here!" />
-        </div>
+       </div> 
+
+
+      <main className={styles.main}>
 
         {/* print greeting on homepage */}
         <p>{greeting}</p>
 
-        {/* added div and buttons ... */}
-        {/* <div>
-          <button onClick={executeScript}>
-            Magic Number
+        {/* added div and buttons */}
+        <div className={styles.flex}>
+          
+          {/* search keyword input box */}
+          <input onChange={(e) => setNewGreeting(e.target.value)} placeholder="Type Here!" />
+          
+          {/* run transaction button */}
+          <button onClick={runTransaction}>
+            Run Transaction
           </button>
-        </div> */}
+          
+          {/* added div and buttons ... */}
+          {/* <div>
+            <button onClick={executeScript}>
+              Magic Number
+            </button>
+          </div> */}
+
+        </div>
+
+        
 
       </main>
+
     </div>
   )
 }
