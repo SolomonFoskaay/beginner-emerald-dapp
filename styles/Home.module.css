@@ -37,14 +37,14 @@
   bottom: 5px;
   display: flex;
   flex-direction: column;
-  width: 85%; /* Chapter5Day1Quest4 CHANGE 1: changed from 75 to 85% to make input box & run transaction button wider */
+  width: 85%; /* Chapter5 Day1 Quest4 CHANGE 1: changed from 75 to 85% to make input box & run transaction button wider */
   left: 50%;
   transform: translateX(-50%);
 }
 
 .main p {
   position: relative;
-  font-size: 50px; /* Chapter5Day1Quest4 CHANGE 2: changed from 25 to 50px to make it bolder */
+  font-size: 50px; /* Chapter5 Day1 Quest4 CHANGE 2: changed from 25 to 50px to make it bolder */
   top: 20%;
 }
 
@@ -52,7 +52,7 @@
   padding: 10px;
   font-size: 16px;
   font-weight: bold;
-  border-radius: 20px; /* Chapter5Day1Quest4 CHANGE 3: changed from 5 to 20px to make input box border round shaped */
+  border-radius: 20px; /* Chapter5 Day1 Quest4 CHANGE 3: . changed from 5 to 20px to make input box border round shaped */
   outline: 0;
   border: 0px;
   margin: 5px;
