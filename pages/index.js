@@ -13,13 +13,8 @@ export default function Home() {
   // declare variable newGreeting
   const [newGreeting, setNewGreeting] = useState('');
   // declare variable txStatus
-  // const [txStatus, setTxStatus] = useState('');
+  const [txStatus, setTxStatus] = useState('Run Transaction Now');
 
-  // js runTransaction function for Run Transaction button
-  // function runTransaction() {
-  //   console.log("Running transaction!");
-  //   console.log("Changing the greeting to: " + newGreeting);
-  // }
 
   // Execute transaction on flow using FCL
   async function runTransaction() {
@@ -50,7 +45,23 @@ export default function Home() {
     // Instantly auto update displayed greeting after transaction successful
     await fcl.tx(transactionId).onceSealed();
       executeScript(); //call executeScript function
-    }
+
+    // Auto update txStatus  variable value per transaction done
+    fcl.tx(transactionId).subscribe(res => {
+      console.log(res);
+      if (res.status === 0 || res.status === 1) {
+        setTxStatus('Pending...');
+      } else if (res.status === 2) {
+        setTxStatus('Finalized...')
+      } else if (res.status === 3) {
+        setTxStatus('Executed...');
+      } else if (res.status === 4) {
+        setTxStatus('Sealed!');
+        setTxStatus('Sealed!');
+    setTimeout(() => setTxStatus('Run Transaction'), 2000); // timer to reset txStatus after 2seconds
+      }
+    })
+  }
 
   // Execute script on flow using FCL
   async function executeScript() {
@@ -91,9 +102,9 @@ export default function Home() {
     // }
 
 
-  // calling the script at every page refresh using useEffect
+  // calling functions like the script at every page refresh using useEffect
   useEffect(() => {
-    executeScript()
+    executeScript();
   }, [])
 
 
@@ -135,7 +146,7 @@ export default function Home() {
           
           {/* run transaction button */}
           <button onClick={runTransaction}>
-            Run Transaction
+            {txStatus}
           </button>
           
           {/* added div and buttons ... */}
